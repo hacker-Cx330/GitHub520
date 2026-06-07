@@ -60,7 +60,7 @@ def write_file(hosts_content: str, update_time: str) -> bool:
                                  "README_template.md")
     write_host_file(hosts_content)
     if os.path.exists(output_doc_file_path):
-        with open(output_doc_file_path, "r") as old_readme_fb:
+        with open(output_doc_file_path, "r", encoding="utf-8") as old_readme_fb:
             old_content = old_readme_fb.read()
             if old_content:
                 old_hosts = old_content.split("```bash")[1].split("```")[0].strip()
@@ -71,24 +71,24 @@ def write_file(hosts_content: str, update_time: str) -> bool:
                     print("host not change")
                     return False
 
-    with open(template_path, "r") as temp_fb:
+    with open(template_path, "r", encoding="utf-8") as temp_fb:
         template_str = temp_fb.read()
         hosts_content = template_str.format(hosts_str=hosts_content,
                                             update_time=update_time)
-        with open(output_doc_file_path, "w") as output_fb:
+        with open(output_doc_file_path, "w", encoding="utf-8") as output_fb:
             output_fb.write(hosts_content)
     return True
 
 
 def write_host_file(hosts_content: str) -> None:
     output_file_path = os.path.join(os.path.dirname(__file__), 'hosts')
-    with open(output_file_path, "w") as output_fb:
+    with open(output_file_path, "w", encoding="utf-8") as output_fb:
         output_fb.write(hosts_content)
 
 
 def write_json_file(hosts_list: list) -> None:
     output_file_path = os.path.join(os.path.dirname(__file__), 'hosts.json')
-    with open(output_file_path, "w") as output_fb:
+    with open(output_file_path, "w", encoding="utf-8") as output_fb:
         json.dump(hosts_list, output_fb)
 
 
