@@ -43,11 +43,15 @@ def ping_cached(ip: str) -> int:
     global PING_LIST
     if ip in PING_LIST:
         return PING_LIST[ip]
-    ping_times = [ping(ip, timeout=PING_TIMEOUT_SEC).rtt_avg_ms for _ in range(3)]
-    ping_times.sort()
-    print(f'Ping {ip}: {ping_times} ms')
-    PING_LIST[ip] = ping_times[1] # 取中位数
-    return PING_LIST[ip]
+    try:
+        ping_times = [ping(ip, timeout=PING_TIMEOUT_SEC).rtt_avg_ms for _ in range(3)]
+        ping_times.sort()
+        print(f'Ping {ip}: {ping_times} ms')
+        PING_LIST[ip] = ping_times[1] # 取中位数
+        return PING_LIST[ip]
+    except OSError as e:
+        print(f'Ping {ip} error: {e}')
+        pass
 
 
 def select_ip_from_list(ip_list: List[str]) -> Optional[str]:
@@ -97,7 +101,6 @@ def get_ip_list_from_ipaddress_com(session: Any, github_url: str) -> Optional[Li
         rs = session.get(url, headers=headers, timeout=5)
         pattern = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
         ip_list = re.findall(pattern, rs.html.text)
-        # print(f'ipaddress_com:{ip_list}')
         return ip_list
     except Exception as ex:
         print(f"get: {url}, error: {ex}")
@@ -226,3 +229,4 @@ if __name__ == "__main__":
         loop.run_until_complete(main())
     finally:
         loop.close()
+    input("Press any key to exit...")
